@@ -1,0 +1,5 @@
+### logs ###
+server.log
+
+### node modules ##
+node_modules/

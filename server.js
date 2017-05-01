@@ -1,0 +1,59 @@
+const express = require('express');
+const hbs = require('hbs')
+const fs = require('fs')
+
+var app = express();
+
+hbs.registerPartials(__dirname + '/views/partials')
+app.set('view engine', 'hbs')
+
+app.use((req, res, next) => { // middleware 
+	var now = new Date().toString();
+	var log = `${now}: ${req.method} ${req.url}`;
+
+	console.log(log) // logger of each request
+	fs.appendFile('server.log', log + '\n', (err) => {
+		if (err) {
+			console.log('Unable to append to server.log.')
+		};
+	})
+
+	next(); // middleware expression is done - do the next operation
+})
+
+// app.use((req, res, next) => {
+// 	res.render('maintenance.hbs')
+// });
+
+app.use(express.static(__dirname + '/public')) // serve static files in this directory
+
+hbs.registerHelper('getCurrentYear', () => {
+	return new Date().getFullYear()
+});
+
+hbs.registerHelper('screamIt', (text) => {
+	return text.toUpperCase();
+})
+
+app.get('/', (req, res) => {
+	res.render('home.hbs', {
+		pageTitle: 'Home Page',
+		welcomeMessage: "Welcome to my home page! Howdy, I'm Alexius!"
+	})
+});
+
+app.get('/about', (req, res) => {
+	res.render('about.hbs', {
+		pageTitle: 'About Page'
+	});
+})
+
+app.get('/bad', (req, res) => {
+	res.send({
+		errorMessage: 'Unable to handle request'
+	})
+})
+
+app.listen(3000, () => {
+	console.log('Server is up on port 3000');
+});
