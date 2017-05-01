@@ -3,3 +3,6 @@ server.log
 
 ### node modules ##
 node_modules/
+
+### other files ##
+loader
